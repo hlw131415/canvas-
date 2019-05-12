@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+      body{
+          padding: 0;
+          margin: 0;
+      }
+      canvas{
+          background-color: black;
+      }
+    </style>
+</head>
+<body>
+    <canvas></canvas>
+</body>
+<script>
+    var mycanvas = document.querySelector('canvas');
+    var ctx = mycanvas.getContext('2d');
+    mycanvas.width = document.documentElement.clientWidth;
+    mycanvas.height = document.documentElement.clientHeight;
+    var balls = [];
+    function Ball(x,y){
+        this.x = x;
+        this.y = y;
+        this.r = 50;
+        this.dx = parseInt(Math.random()*8)-4;
+        this.dy = parseInt(Math.random()*8)-4;
+        this.color = 'rgba('+parseInt(Math.random()*256)+','+parseInt(Math.random()*256)+','+parseInt(Math.random()*256)+',0.5)';
+        balls.push(this);
+    }
+    Ball.prototype.drag = function(){
+        ctx.beginPath();
+        ctx.arc(this.x,this.y,this.r,0,Math.PI*2,true);
+        ctx.closePath();
+        ctx.fillStyle = this.color;
+        ctx.fill();
+    }
+    Ball.prototype.remove = function(){
+        for(var i=0;i<balls.length;i++){
+            if(balls[i] === this){
+                balls.splice(i,1);
+            }
+        }
+    }
+    Ball.prototype.update = function(){
+        this.x += this.dx;
+        this.y += this.dy;
+        this.r--;
+        if(this.r < 0){
+            this.remove();
+        }
+    }
+    setInterval(function(){
+        ctx.clearRect(0,0,mycanvas.width,mycanvas.height);
+        for(var i=0;i<balls.length;i++){
+            balls[i].update();
+            balls[i] && balls[i].drag();
+        }
+    },20);
+    mycanvas.onmousemove = function(event){
+        new Ball(event.clientX,event.clientY);
+    }
+</script>
+</html>
